@@ -1,0 +1,202 @@
+---
+description: Structure for generating NumPy lessons in Jupyter notebooks
+globs: learning/numpy/**/*.ipynb
+alwaysApply: false
+---
+
+# NumPy Lesson Structure
+
+When generating NumPy learning materials, keep a strict hierarchy and continuity:
+`Level -> Lessons -> Blocks`.
+
+## Course structure policy
+
+- A level may contain several lessons, split by subtopics.
+- A lesson may contain several blocks, each block is one logical concept.
+- Default recommendation:
+  - 2-4 lessons per level
+  - 3-6 blocks per lesson
+- Do not put a whole level into one oversized lesson.
+- Split into multiple lessons when topic depth, edge cases, or workload becomes too high.
+- Each next lesson assumes successful completion of all previous lessons (global order).
+
+## Naming and numbering convention
+
+- Use global (continuous) lesson numbering across all levels; do not reset per level.
+- Naming format for notebooks:
+  - `lesson-XXX-l{level:02d}-{topic-slug}.ipynb`
+  - `XXX` is 3-digit global lesson number: `001`, `002`, `003`, ...
+- Store notebooks directly under learning NumPy directory:
+  - `learning/numpy/lesson-XXX-l{level:02d}-{topic-slug}.ipynb`
+- Keep `topic-slug` lowercase, ASCII, and hyphen-separated.
+- Examples:
+  - `learning/numpy/lesson-001-l01-array-basics.ipynb`
+  - `learning/numpy/lesson-002-l01-shape-and-axis.ipynb`
+  - `learning/numpy/lesson-003-l02-indexing-basics.ipynb`
+
+## Required lesson flow
+
+1. Lesson metadata: title, level, global lesson number, prerequisites, learning goals, estimated time.
+2. 3-6 content blocks per lesson.
+3. Each block must contain:
+   - Theory (short, focused explanation)
+   - Example (runnable NumPy code cell)
+   - Practice tasks (immediately after example)
+
+## Pedagogical structure standard (must match high-quality notebook style)
+
+- Start each lesson with:
+  - module title and short context
+  - previous/next lesson links
+  - explicit "what you will learn" list
+- Each major section must include:
+  - concept explanation
+  - runnable demonstration
+  - interpretation of results
+  - edge-case warning(s) where relevant
+- Include at least one "mental model" explanation per lesson
+  - e.g., memory layout, indexing geometry, shape transitions
+- Include a concise module cheat sheet near the end:
+  - key APIs
+  - key attributes
+  - typical pitfalls
+- End with explicit transition:
+  - what is mastered now
+  - what next lesson builds on
+
+## API explanation quality gate
+
+- Never present a list of new NumPy functions as raw code without explanation.
+- For each new API in a block, provide:
+  - what it does
+  - minimal signature (short form)
+  - key parameters (with meaning of each argument)
+  - expected output (`shape`, `dtype`, typical values)
+  - when to use it in practice
+- Argument description is mandatory (no exceptions):
+  - include parameter name
+  - include allowed value/type expectations
+  - include behavioral effect on output
+- If an API has optional arguments that are frequently used (`dtype`, `axis`, `endpoint`, `base`, etc.), they must be explicitly documented.
+- For foundational APIs, do NOT compress many methods into one short theory paragraph.
+- Foundational API delivery format is mandatory:
+  - dedicated theory mini-block per API
+  - dedicated runnable demo cell per API
+  - dedicated practice task per API
+  - dedicated assert-based validation per API task
+- If a block introduces more than 2 new APIs, split into micro-sections.
+- After demo code, add short output interpretation in plain language.
+- Add 1-2 verification checks (`assert`) that confirm the explained behavior.
+- Tasks may only use APIs explicitly explained in the same block or earlier lessons.
+- For each lesson, include a short "Coverage checklist" (introduced APIs vs expected APIs for this topic).
+- Before finalizing a lesson, run a gap check against roadmap topics for this level and either:
+  - include the missing important APIs, or
+  - explicitly mark them as deferred to a specific next lesson.
+
+## Academic completeness standard (mandatory)
+
+- No "minimal" lesson versions are allowed.
+- Each lesson must be sufficient for academic progression:
+  - complete conceptual explanation
+  - API semantics and boundaries
+  - representative examples
+  - practice that checks understanding, not copy-paste only
+- Every lesson must end with:
+  - coverage checklist
+  - explicit list of deferred topics (if any) with target lesson ID
+- A lesson is NOT complete if important APIs from its roadmap scope are missing without explicit defer note.
+
+## Level 1 minimum API checklist
+
+- Array creation/core constructors: `array`, `zeros`, `ones`, `full`, `empty`.
+- Identity/diagonal basics: `eye`, `identity`, `diag`, `diagonal`.
+- Range constructors: `arange`, `linspace`, `logspace`.
+- Pattern-based constructors: `zeros_like`, `ones_like`, `full_like`, `fromfunction`.
+
+## Foundational constructors depth requirement (Level 1)
+
+- The following APIs are mandatory as standalone learning units in Lesson 001:
+  - `array`
+  - `zeros`, `ones`, `full`, `empty`
+  - `eye`, `identity`
+  - `diag`, `diagonal`
+  - `arange`, `linspace`, `logspace`
+  - `zeros_like`, `ones_like`, `full_like`, `fromfunction`
+- "Standalone learning unit" means:
+  - theory (purpose + signature + parameters + output expectations)
+  - runnable example
+  - hands-on task
+  - assert check for task outcome
+
+## Language policy
+
+- All learner-facing content must be in Russian.
+- This includes lesson metadata, theory, task statements, hints, recap, and section headings.
+- Code identifiers and NumPy API names remain in original form (e.g., `reshape`, `dtype`, `np.mean`).
+
+## Block dependency and sequencing
+
+- Blocks are strictly sequential and cumulative.
+- Hard tasks in block `N` may reuse concepts from blocks `1..N-1`.
+- Do not introduce a new advanced concept in tasks before teaching it in theory/examples.
+
+## Practice task rules
+
+- Number and difficulty of tasks must be context-appropriate, not fixed per block.
+- Allowed patterns include (examples): only easy tasks, several easy tasks, easy+medium, medium+hard.
+- Use hard tasks only when topic depth justifies it.
+- Include expected shape/output hints without giving full solution.
+- Tasks must be result-oriented: describe target outcome/state first, not the exact code to type.
+- Do not use copy-paste task wording like `Создай x = np.func(...)` as the main formulation.
+- Preferred style: "получи массив/результат с такими свойствами" + "используй `<API>`".
+- At least some tasks in each lesson should require combining current block material with prior lessons.
+- Do not place all tasks in one large markdown block.
+- Each task must be a separate mini-block: markdown task statement + dedicated code cell directly below it.
+- Task statement format must include:
+  - Goal
+  - Input data or generation rule
+  - Expected output constraints (`shape`, `dtype`, key conditions)
+  - Optional restriction (e.g., no Python loops)
+- Tasks in a block must rely only on concepts already explained in that block (and previously completed material). Do not require unseen APIs or concepts.
+- Every task must have a dedicated validation cell with `assert` checks.
+- Validation cells are mandatory; tasks without objective checks are not acceptable.
+- In final lesson artifacts, do not leave unresolved placeholder-only solutions (e.g., TODO-only cells without checks and expected outcomes).
+
+## Edge cases and pitfalls coverage
+
+- Every lesson must include a dedicated edge-cases section for the topic.
+- Must include at least 2 realistic pitfalls with demonstration code.
+- Pitfalls should be executable and observable (not text-only), with brief fix guidance.
+
+## Consistency and correctness checks
+
+- Before finalizing lesson, verify that:
+  - examples and comments are consistent
+  - code outputs match stated expectations
+  - no contradictory explanation remains after edits
+- All code cells must be syntactically valid Python.
+- Do not insert raw line breaks inside quoted string literals in code cells.
+- For multiline print labels, use escaped newline sequences (`\\n`) inside strings.
+- Run a preflight compile check for every code cell before finalizing the notebook.
+- If a section is partially deferred, mark it explicitly in deferred topics with target lesson ID.
+
+## Continuity requirements
+
+- Every new block assumes previous blocks are completed.
+- Every new lesson assumes previous lessons are completed.
+- Start each lesson with a short prerequisite check list (2-4 quick checks).
+- End each lesson with:
+  - recap and readiness criteria for next lesson
+  - one consolidated "Критерии самопроверки" section for the whole lesson
+- Define lesson pass criteria (default):
+  - all easy tasks completed
+  - at least 70% of medium tasks completed
+  - at least 1 hard task completed (if hard tasks exist)
+
+## Notebook formatting
+
+- Use clear Markdown headings for each block.
+- Keep code cells executable top-to-bottom without hidden state.
+- Prefer small, verifiable code examples over long scripts.
+- If random is used, enforce reproducibility with `np.random.default_rng(seed)`.
+- Include dedicated check cells with `assert` for key tasks.
